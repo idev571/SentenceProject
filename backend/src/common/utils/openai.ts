@@ -21,9 +21,9 @@ export async function generateAudio(
   const filePath = path.join(TEMP_DIR, `${Date.now()}_audio.mp3`);
   const config = LANGUAGE_CONFIG[lang];
   const langInstructions: Record<Language, string> = {
-    uz: "Pronounce this word clearly in Uzbek language with correct Uzbek pronunciation.",
-    ru: "Pronounce this word clearly in Russian language with correct Russian pronunciation.",
-    en: "Pronounce this word clearly in English.",
+    uz: "Pronounce this word clearly in Uzbek language with correct Uzbek pronunciation for kids to understand.",
+    ru: "Pronounce this word clearly in Russian language with correct Russian pronunciation for kids to understand.",
+    en: "Pronounce this word clearly in English for kids to understand.",
   };
   const response = await openai.audio.speech.create({
     model: "gpt-4o-mini-tts",
@@ -56,26 +56,23 @@ export async function generateImage(
   lang: Language,
 ): Promise<string | null> {
   ensureTempDir();
-  // Translate to English for better image generation
-  let englishWord = word;
-  if (lang !== "en") {
-    const translation = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        {
-          role: "system",
-          content:
-            "Describe a simple visual scene that represents the meaning of the given word. Reply with only the scene description in English, max 15 words. No abstract concepts — describe something that can be drawn. Do not mention any text or letters.",
-        },
-        { role: "user", content: word },
-      ],
-    });
-    englishWord = translation.choices[0].message.content?.trim() || word;
-  }
+  // Generate a visual scene description for better image generation
+  const translation = await openai.chat.completions.create({
+    model: "gpt-4o-mini",
+    messages: [
+      {
+        role: "system",
+        content:
+          "Describe a simple visual scene that represents the meaning of the given word. Reply with only the scene description in English, max 15 words. No abstract concepts — describe only objects, people, animals, or nature. Never mention any text, letters, signs, books, or writing.",
+      },
+      { role: "user", content: word },
+    ],
+  });
+  const sceneDescription = translation.choices[0].message.content?.trim() || word;
   const filePath = path.join(TEMP_DIR, `${Date.now()}_image.png`);
   const response = await openai.images.generate({
     model: "dall-e-3",
-    prompt: `${englishWord}. Cartoon educational illustration style, colorful, simple. Absolutely no text, no letters, no words, no writing anywhere in the image.`,
+    prompt: `${sceneDescription}. Style: flat vector cartoon for children, bright colors, clean background. CRITICAL: The image must contain ZERO text, ZERO letters, ZERO numbers, ZERO words, ZERO signs, ZERO writing of any kind. Only visual elements.`,
     n: 1,
     size: "1024x1024",
   });
