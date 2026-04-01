@@ -50,7 +50,7 @@ export function registerCallbacks(bot: Telegraf) {
     await ctx.answerCbQuery(l.loadingImage);
 
     try {
-      const imagePath = await generateImage(word);
+      const imagePath = await generateImage(word, lang);
 
       if (imagePath) {
         await ctx.replyWithPhoto(

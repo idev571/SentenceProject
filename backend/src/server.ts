@@ -42,8 +42,8 @@ app.post("/api/sentence", async (req, res) => {
 });
 
 app.post("/api/image", async (req, res) => {
-  const { word } = req.body as { word: string };
-  const filePath = await generateImage(word);
+  const { word, lang } = req.body as { word: string; lang: Language };
+  const filePath = await generateImage(word, lang || "en");
   if (!filePath) {
     res.status(503).json({ error: "Image not available" });
     return;
