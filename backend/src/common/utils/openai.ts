@@ -20,10 +20,16 @@ export async function generateAudio(
   ensureTempDir();
   const filePath = path.join(TEMP_DIR, `${Date.now()}_audio.mp3`);
   const config = LANGUAGE_CONFIG[lang];
+  const langInstructions: Record<Language, string> = {
+    uz: "Pronounce this word clearly in Uzbek language with correct Uzbek pronunciation.",
+    ru: "Pronounce this word clearly in Russian language with correct Russian pronunciation.",
+    en: "Pronounce this word clearly in English.",
+  };
   const response = await openai.audio.speech.create({
-    model: "tts-1",
+    model: "gpt-4o-mini-tts",
     voice: "alloy",
     input: word,
+    instructions: langInstructions[lang],
   });
   const buffer = Buffer.from(await response.arrayBuffer());
   fs.writeFileSync(filePath, buffer);
@@ -45,7 +51,10 @@ export async function generateSentence(
   return response.choices[0].message.content || "";
 }
 
-export async function generateImage(word: string, lang: Language): Promise<string | null> {
+export async function generateImage(
+  word: string,
+  lang: Language,
+): Promise<string | null> {
   ensureTempDir();
   // Translate to English for better image generation
   let englishWord = word;
@@ -53,7 +62,11 @@ export async function generateImage(word: string, lang: Language): Promise<strin
     const translation = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
-        { role: "system", content: "Translate the given word to English. Reply with only the English word, nothing else." },
+        {
+          role: "system",
+          content:
+            "Translate the given word to English. Reply with only the English word, nothing else.",
+        },
         { role: "user", content: word },
       ],
     });
