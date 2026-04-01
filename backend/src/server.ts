@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import fs from "fs";
 import { config } from "./config/env";
 import bot from "./bot/bot";
 import {
@@ -21,34 +22,63 @@ app.use((req, res, next) => {
   next();
 });
 
+const VALID_LANGS = ["uz", "ru", "en"];
+
 app.post("/api/audio", async (req, res) => {
-  const { word, lang } = req.body as { word: string; lang: Language };
-  const filePath = await generateAudio(word, lang);
-  if (!filePath) {
-    res.status(503).json({ error: "Audio not available" });
-    return;
+  try {
+    const { word, lang } = req.body as { word: string; lang: Language };
+    if (!word || !lang || !VALID_LANGS.includes(lang)) {
+      res.status(400).json({ error: "Invalid word or lang" });
+      return;
+    }
+    const filePath = await generateAudio(word, lang);
+    if (!filePath) {
+      res.status(503).json({ error: "Audio not available" });
+      return;
+    }
+    res.sendFile(filePath, () => fs.unlink(filePath, () => {}));
+  } catch (e: any) {
+    console.error("[API] audio error:", e.message);
+    res.status(500).json({ error: "Internal server error" });
   }
-  res.sendFile(filePath);
 });
 
 app.post("/api/sentence", async (req, res) => {
-  const { word, lang } = req.body as { word: string; lang: Language };
-  const sentence = await generateSentence(word, lang);
-  if (!sentence) {
-    res.status(503).json({ error: "Sentence not available" });
-    return;
+  try {
+    const { word, lang } = req.body as { word: string; lang: Language };
+    if (!word || !lang || !VALID_LANGS.includes(lang)) {
+      res.status(400).json({ error: "Invalid word or lang" });
+      return;
+    }
+    const sentence = await generateSentence(word, lang);
+    if (!sentence) {
+      res.status(503).json({ error: "Sentence not available" });
+      return;
+    }
+    res.json({ sentence });
+  } catch (e: any) {
+    console.error("[API] sentence error:", e.message);
+    res.status(500).json({ error: "Internal server error" });
   }
-  res.json({ sentence });
 });
 
 app.post("/api/image", async (req, res) => {
-  const { word, lang } = req.body as { word: string; lang: Language };
-  const filePath = await generateImage(word, lang || "en");
-  if (!filePath) {
-    res.status(503).json({ error: "Image not available" });
-    return;
+  try {
+    const { word, lang } = req.body as { word: string; lang: Language };
+    if (!word || !lang || !VALID_LANGS.includes(lang)) {
+      res.status(400).json({ error: "Invalid word or lang" });
+      return;
+    }
+    const filePath = await generateImage(word, lang);
+    if (!filePath) {
+      res.status(503).json({ error: "Image not available" });
+      return;
+    }
+    res.sendFile(filePath, () => fs.unlink(filePath, () => {}));
+  } catch (e: any) {
+    console.error("[API] image error:", e.message);
+    res.status(500).json({ error: "Internal server error" });
   }
-  res.sendFile(filePath);
 });
 
 app.listen(config.port, "0.0.0.0", () => {

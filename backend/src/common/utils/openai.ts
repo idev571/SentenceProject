@@ -1,9 +1,10 @@
 import OpenAI from "openai";
 import fs from "fs";
 import path from "path";
+import { config } from "../../config/env";
 import { LANGUAGE_CONFIG, Language } from "../constants/languages";
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const openai = new OpenAI({ apiKey: config.openaiApiKey });
 
 const TEMP_DIR = path.join(__dirname, "../../../../temp");
 
