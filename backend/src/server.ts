@@ -13,6 +13,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.use((req, res, next) => {
+  const start = Date.now();
+  res.on("finish", () => {
+    console.log(`[API] ${req.method} ${req.path} ${res.statusCode} ${Date.now() - start}ms`, JSON.stringify(req.body));
+  });
+  next();
+});
+
 app.post("/api/audio", async (req, res) => {
   const { word, lang } = req.body as { word: string; lang: Language };
   const filePath = await generateAudio(word, lang);
