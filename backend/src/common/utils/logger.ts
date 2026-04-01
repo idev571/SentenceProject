@@ -10,10 +10,21 @@ function ensureLogDir() {
   }
 }
 
+function timestamp() {
+  return new Date().toISOString();
+}
+
 export function logRequest(userId: number, username: string | undefined, word: string, lang: string) {
   ensureLogDir();
-  const timestamp = new Date().toISOString();
-  const line = `[${timestamp}] user:${userId} @${username || "unknown"} lang:${lang} word:"${word}"\n`;
-  fs.appendFileSync(LOG_FILE, line);
-  console.log(line.trim());
+  const line = `[${timestamp()}] [BOT] user:${userId} @${username || "unknown"} lang:${lang} word:"${word}"`;
+  fs.appendFileSync(LOG_FILE, line + "\n");
+  console.log(line);
+}
+
+export function logApi(method: string, path: string, body: any, status: number, ms: number) {
+  ensureLogDir();
+  const bodyStr = JSON.stringify(body);
+  const line = `[${timestamp()}] [API] ${method} ${path} ${status} ${ms}ms body:${bodyStr}`;
+  fs.appendFileSync(LOG_FILE, line + "\n");
+  console.log(line);
 }
