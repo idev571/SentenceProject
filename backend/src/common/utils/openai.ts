@@ -56,29 +56,14 @@ export async function generateImage(
   lang: Language,
 ): Promise<string | null> {
   ensureTempDir();
-  // Generate a visual scene description for better image generation
-  const translation = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
-    messages: [
-      {
-        role: "system",
-        content:
-          "Describe a simple visual scene that represents the meaning of the given word. Reply with only the scene description in English, max 15 words. No abstract concepts — describe only objects, people, animals, or nature. Never mention any text, letters, signs, books, or writing.",
-      },
-      { role: "user", content: word },
-    ],
-  });
-  const sceneDescription = translation.choices[0].message.content?.trim() || word;
   const filePath = path.join(TEMP_DIR, `${Date.now()}_image.png`);
   const response = await openai.images.generate({
-    model: "dall-e-3",
-    prompt: `${sceneDescription}. Style: flat vector cartoon for children, bright colors, clean background. CRITICAL: The image must contain ZERO text, ZERO letters, ZERO numbers, ZERO words, ZERO signs, ZERO writing of any kind. Only visual elements.`,
-    n: 1,
+    model: "gpt-image-1",
+    prompt: `Create a simple, clear illustration for the word "${word}". Flat vector cartoon style for children, single subject centered, bright colors, white background. No text, no letters, no writing.`,
     size: "1024x1024",
   });
-  const imageUrl = response.data![0].url!;
-  const imageResponse = await fetch(imageUrl);
-  const buffer = Buffer.from(await imageResponse.arrayBuffer());
+  const imageBase64 = response.data![0].b64_json!;
+  const buffer = Buffer.from(imageBase64, "base64");
   fs.writeFileSync(filePath, buffer);
   return filePath;
 }
