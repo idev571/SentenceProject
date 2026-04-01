@@ -2,7 +2,11 @@ import express from "express";
 import cors from "cors";
 import { config } from "./config/env";
 import bot from "./bot/bot";
-import { generateAudio, generateSentence, generateImage } from "./common/utils/openai";
+import {
+  generateAudio,
+  generateSentence,
+  generateImage,
+} from "./common/utils/openai";
 import { Language } from "./common/constants/languages";
 
 const app = express();
