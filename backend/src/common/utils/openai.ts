@@ -1,0 +1,54 @@
+// import OpenAI from "openai";
+import fs from "fs";
+import path from "path";
+import { LANGUAGE_CONFIG, Language } from "../constants/languages";
+
+// TODO: OpenAI tayyor bo'lganda kommentdan chiqaring
+// const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+const TEMP_DIR = path.join(__dirname, "../../../../temp");
+
+// TODO: OpenAI tayyor bo'lganda quyidagi funksiyalarni haqiqiy OpenAI versiyasiga almashtiring
+
+export async function generateAudio(word: string, lang: Language): Promise<string | null> {
+  // const filePath = path.join(TEMP_DIR, `${Date.now()}_audio.mp3`);
+  // const config = LANGUAGE_CONFIG[lang];
+  // const response = await openai.audio.speech.create({
+  //   model: "tts-1",
+  //   voice: "alloy",
+  //   input: config.ttsPrefix + word,
+  // });
+  // const buffer = Buffer.from(await response.arrayBuffer());
+  // fs.writeFileSync(filePath, buffer);
+  // return filePath;
+  return null;
+}
+
+export async function generateSentence(word: string, lang: Language): Promise<string | null> {
+  // const config = LANGUAGE_CONFIG[lang];
+  // const response = await openai.chat.completions.create({
+  //   model: "gpt-4o-mini",
+  //   messages: [
+  //     { role: "system", content: config.sentencePrompt },
+  //     { role: "user", content: word },
+  //   ],
+  // });
+  // return response.choices[0].message.content || "";
+  return null;
+}
+
+export async function generateImage(word: string): Promise<string | null> {
+  // const filePath = path.join(TEMP_DIR, `${Date.now()}_image.png`);
+  // const response = await openai.images.generate({
+  //   model: "dall-e-3",
+  //   prompt: `A simple, clear illustration representing the word: "${word}". Educational style, colorful, no text.`,
+  //   n: 1,
+  //   size: "1024x1024",
+  // });
+  // const imageUrl = response.data![0].url!;
+  // const imageResponse = await fetch(imageUrl);
+  // const buffer = Buffer.from(await imageResponse.arrayBuffer());
+  // fs.writeFileSync(filePath, buffer);
+  // return filePath;
+  return null;
+}
