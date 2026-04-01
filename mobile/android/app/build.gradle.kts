@@ -16,7 +16,7 @@ android {
         versionName = "1.0"
 
         // TODO: Server IP ni o'zgartiring
-        buildConfigField("String", "BASE_URL", "\"http://35.228.40.136:3098\"")
+        buildConfigField("String", "BASE_URL", "\"http://10.66.195.5:3098\"")
     }
 
     buildFeatures {
