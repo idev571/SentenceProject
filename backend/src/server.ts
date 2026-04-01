@@ -51,8 +51,8 @@ app.post("/api/image", async (req, res) => {
   res.sendFile(filePath);
 });
 
-app.listen(config.port, () => {
-  console.log(`API server running on port ${config.port}`);
+app.listen(config.port, "0.0.0.0", () => {
+  console.log(`API server running on 0.0.0.0:${config.port}`);
 });
 
 bot.launch().then(async () => {
