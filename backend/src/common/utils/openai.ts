@@ -65,7 +65,7 @@ export async function generateImage(
         {
           role: "system",
           content:
-            "Translate the given word to English. Reply with only the English word, nothing else.",
+            "Describe a simple visual scene that represents the meaning of the given word. Reply with only the scene description in English, max 15 words. No abstract concepts — describe something that can be drawn. Do not mention any text or letters.",
         },
         { role: "user", content: word },
       ],
@@ -75,7 +75,7 @@ export async function generateImage(
   const filePath = path.join(TEMP_DIR, `${Date.now()}_image.png`);
   const response = await openai.images.generate({
     model: "dall-e-3",
-    prompt: `A clean, colorful illustration of "${englishWord}". Cartoon educational style. DO NOT include any text, letters, words, or writing in the image.`,
+    prompt: `${englishWord}. Cartoon educational illustration style, colorful, simple. Absolutely no text, no letters, no words, no writing anywhere in the image.`,
     n: 1,
     size: "1024x1024",
   });
